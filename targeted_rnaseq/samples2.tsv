@@ -1,4 +1,6 @@
-Control fibroblast	/Users/hassansaei/Desktop/GitHub.repos/Saei_COL4A5_Intron6_hotspot/targeted_rnaseq/bams2/CDNA_VOI.bam	#B22222
-c.385-756C>T	/Users/hassansaei/Desktop/GitHub.repos/Saei_COL4A5_Intron6_hotspot/targeted_rnaseq/bams2/ALP_6126GM004413_cDNA_OCT_4A5.bam	#660000
-c.385-756C>G	/Users/hassansaei/Desktop/GitHub.repos/Saei_COL4A5_Intron6_hotspot/targeted_rnaseq/bams2/ALP_6126GM004416_cDNA_OCT_4A5.bam	#000000
-c.385-714G>A + emetine	/Users/hassansaei/Desktop/GitHub.repos/Saei_COL4A5_Intron6_hotspot/targeted_rnaseq/bams2/ALP_6126GM004456_cDNA_Fibros_4A5.bam	#000080
+Control fibroblast	/Users/hassansaei/Desktop/GitHub.repos/Saei_deep_intron_hotspots/targeted_rnaseq/bams2/CDNA_VOI.bam	#B22222
+c.385-756C>T	/Users/hassansaei/Desktop/GitHub.repos/Saei_deep_intron_hotspots/targeted_rnaseq/bams2/ALP_6126GM004413_cDNA_OCT_4A5.bam	#660000
+c.385-756C>G	/Users/hassansaei/Desktop/GitHub.repos/Saei_deep_intron_hotspots/targeted_rnaseq/bams2/ALP_6126GM004416_cDNA_OCT_4A5.bam	#000000
+c.385-714G>A + emetine	/Users/hassansaei/Desktop/GitHub.repos/Saei_deep_intron_hotspots/targeted_rnaseq/bams2/ALP_6126GM004456_cDNA_Fibros_4A5.bam	#000080
+c.385-679T>C	/Users/hassansaei/Desktop/GitHub.repos/Saei_deep_intron_hotspots/targeted_rnaseq/bams2/cDNA_ALP_6126GM005565_Fibro_4A5.bam	#228B22
+c.385-679T>C + emetine	/Users/hassansaei/Desktop/GitHub.repos/Saei_deep_intron_hotspots/targeted_rnaseq/bams2/cDNA_ALP_6126GM005566_Fibro_E_4A5.bam	#006400
