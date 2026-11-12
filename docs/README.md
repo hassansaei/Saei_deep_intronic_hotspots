@@ -17,7 +17,7 @@ This folder is the published site root. Analysis outputs under `genome_wide/` st
 | Pages UI (`index.html`, `gene.html`, `about.html`) | Search, gene summary, interval table, inline SVG plots |
 | `docs/data/` | Generated payload the UI fetches (never hand-edit) |
 | `scripts/prepare_release.py` + `config.json` | Build `docs/data/` from `genome_wide/` |
-| Zenodo (separate step) | Full tables and PNG plots; not fetched per gene by the site |
+| Zenodo (separate step) | Full atlas for bulk download (chromosome zips); gene pages only offer that gene’s intervals CSV |
 
 **Unit on the gene page:** interior significant **intervals**, not “one hotspot per gene”.
 

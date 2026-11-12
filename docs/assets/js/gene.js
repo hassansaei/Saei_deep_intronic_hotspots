@@ -6,10 +6,8 @@ import {
   formatNum,
   formatCoord,
   chromLabel,
-  zenodoChromArchive,
   dataUrl,
   wireHomeSearch,
-  goGene,
 } from "./app.js";
 import { renderExonMap, renderIntronView, intronFacts } from "./plots.js";
 
@@ -169,18 +167,6 @@ async function init() {
   dl.href = dataUrl(`downloads/${stem}_intervals.csv`);
   dl.download = `${stem}_intervals.csv`;
   dl.addEventListener("click", () => track(`/download/${geneDoc.gene}`));
-
-  const ver = "v1.0";
-  const archive = zenodoChromArchive(chrom, ver);
-  const zen = $("dl-zenodo");
-  zen.textContent = `Full chr${chromLabel(chrom)} archive on Zenodo`;
-  zen.href = "#release-note";
-  zen.title = "Zenodo full-release DOI not reserved yet";
-  zen.addEventListener("click", (ev) => {
-    ev.preventDefault();
-    $("release-note").hidden = false;
-    track(`/download/zenodo/${archive}`);
-  });
 
   for (const th of document.querySelectorAll("#interval-table th[data-key]")) {
     th.addEventListener("click", () => {
