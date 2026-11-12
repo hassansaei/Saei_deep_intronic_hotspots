@@ -16,9 +16,9 @@ Three steps, run in order:
 
         python scripts/prepare_release.py web --config config.json --out docs/data --workers 8
 
-  3. zenodo     Build the release: summary-table zip, one zip per chromosome
-                with per-gene tables and PNGs (SVGs optional), a manifest
-                with SHA-256 per file, MD5 per zip, not_scored.tsv and a README.
+  3. zenodo     Build the release: summary zip (result tables, OMIM gene list,
+                merged intron BED/TSV), one zip per chromosome with per-gene
+                intron BED/TSV + tables + PNGs, manifest, checksums, README.
 
         python scripts/prepare_release.py zenodo --config config.json --out release
 
@@ -27,7 +27,8 @@ only read, never modified.
 
 Web builds use the scored RefSeq transcript (transcript.json + ncbiRefSeq +
 *_introns.tsv), not a GENCODE GTF. Zenodo packs only genes present in the
-summary table and only the result CSVs listed in config.results_files.
+summary table, the OMIM disease-gene list, intron BED/TSV coordinates, and
+the result CSVs listed in config.results_files. It does not emit not_scored.tsv.
 """
 import argparse, csv, fnmatch, glob, gzip, hashlib, json, os, re, sys, zipfile
 from collections import Counter, defaultdict
@@ -756,6 +757,50 @@ def write_not_scored(path, genes_dir, summary_genes):
     return rows
 
 
+def write_merged_intron_bed(path, genes_dir, genes):
+    """Concatenate per-gene *_introns.bed for scored genes (BED6; name = GENE|intron_N)."""
+    n_genes = n_introns = 0
+    with open(path, "w") as out:
+        for g in genes:
+            beds = sorted(glob.glob(os.path.join(genes_dir, g, "*_introns.bed")))
+            if not beds:
+                continue
+            n_genes += 1
+            with open(beds[0]) as fh:
+                for line in fh:
+                    if not line.strip():
+                        continue
+                    parts = line.rstrip("\n").split("\t")
+                    if len(parts) < 6:
+                        continue
+                    parts[3] = f"{g}|{parts[3]}"
+                    out.write("\t".join(parts) + "\n")
+                    n_introns += 1
+    return n_genes, n_introns
+
+
+def write_merged_intron_tsv(path, genes_dir, genes):
+    """Concatenate per-gene *_introns.tsv for scored genes."""
+    header = None
+    n = 0
+    with open(path, "w", newline="") as out:
+        for g in genes:
+            tsvs = sorted(glob.glob(os.path.join(genes_dir, g, "*_introns.tsv")))
+            if not tsvs:
+                continue
+            with open(tsvs[0], newline="") as fh:
+                rows = list(csv.reader(fh, delimiter="\t"))
+            if not rows:
+                continue
+            if header is None:
+                header = rows[0]
+                out.write("\t".join(header) + "\n")
+            for row in rows[1:]:
+                out.write("\t".join(row) + "\n")
+                n += 1
+    return n
+
+
 def cmd_zenodo(a):
     cfg = load_cfg(a.config)
     out = a.out
@@ -771,10 +816,21 @@ def cmd_zenodo(a):
         print(f"WARNING: {len(missing_dirs)} summary genes have no folder "
               f"(e.g. {', '.join(missing_dirs[:10])})")
     skip_ext = set() if a.include_svg else {".svg"}
+    # Skip transient/local markers; keep intron BED/TSV, tables, PNGs, transcript.json.
+    skip_names = {"plots_done.json"}
     manifest, zips = [], []
     results_files = cfg.get("results_files") or list(DEFAULT_RESULTS_FILES)
 
-    # summary tables: allowlisted CSVs only (skip logs)
+    # Annotation inputs packed beside the summary tables.
+    disease_path = cfg.get("disease_genes_tsv") or os.path.join(cfg.get("root", "genome_wide"), "data", "disease_genes.tsv")
+    merged_bed = os.path.join(out, f"all_scored_introns_{ver}.bed")
+    merged_tsv = os.path.join(out, f"all_scored_introns_{ver}.tsv")
+    n_bed_genes, n_bed_introns = write_merged_intron_bed(merged_bed, gdir, genes)
+    n_tsv_introns = write_merged_intron_tsv(merged_tsv, gdir, genes)
+    print(f"  merged intron BED: {n_bed_introns:,} introns from {n_bed_genes:,} genes")
+    print(f"  merged intron TSV: {n_tsv_introns:,} rows")
+
+    # summary tables + OMIM gene list + merged intron coordinates
     zname = f"summary_tables_{ver}.zip"
     with zipfile.ZipFile(os.path.join(out, zname), "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
         for f in results_files:
@@ -783,10 +839,22 @@ def cmd_zenodo(a):
                 print(f"WARNING: missing results file {fp}")
                 continue
             add_file(zf, fp, f"results/{f}", manifest, zname)
+        if os.path.isfile(disease_path):
+            add_file(zf, disease_path, "annotation/disease_genes.tsv", manifest, zname)
+        else:
+            print(f"WARNING: disease gene list not found: {disease_path}")
+        add_file(zf, merged_bed, "annotation/all_scored_introns.bed", manifest, zname)
+        add_file(zf, merged_tsv, "annotation/all_scored_introns.tsv", manifest, zname)
     zips.append(zname)
     print(f"  {zname}")
+    # Drop loose merged copies; they live inside the zip.
+    for tmp in (merged_bed, merged_tsv):
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
 
-    # per-chromosome gene archives
+    # per-chromosome gene archives (include per-gene *_introns.bed / .tsv)
     by_chr = defaultdict(list)
     for g in genes:
         by_chr[gene_chrom(g, cfg, summary, hot)].append(g)
@@ -796,6 +864,8 @@ def cmd_zenodo(a):
             for g in by_chr[c]:
                 for dp, _, fs in os.walk(os.path.join(gdir, g)):
                     for f in sorted(fs):
+                        if f in skip_names:
+                            continue
                         if os.path.splitext(f)[1].lower() in skip_ext:
                             continue
                         fp = os.path.join(dp, f)
@@ -803,12 +873,6 @@ def cmd_zenodo(a):
                         add_file(zf, fp, arc, manifest, zname)
         zips.append(zname)
         print(f"  {zname}: {len(by_chr[c]):,} genes, {human(os.path.getsize(os.path.join(out, zname)))}")
-
-    not_scored = write_not_scored(os.path.join(out, "not_scored.tsv"), gdir, set(summary))
-    print(f"  not_scored.tsv: {len(not_scored):,} genes")
-    reason_counts = Counter(r["reason"] for r in not_scored)
-    for reason, n in reason_counts.most_common():
-        print(f"    {reason}: {n:,}")
 
     with open(os.path.join(out, "MANIFEST.tsv"), "w") as fh:
         fh.write("archive\tpath\tbytes\tsha256\n")
@@ -823,7 +887,7 @@ def cmd_zenodo(a):
     with open(os.path.join(out, "checksums.md5"), "w") as fh:
         for z in zips:
             fh.write(f"{md5(os.path.join(out, z))}  {z}\n")
-    write_readme(out, cfg, zips, len(genes), manifest, a.include_svg, reason_counts)
+    write_readme(out, cfg, zips, len(genes), manifest, a.include_svg)
 
     files = sorted(os.listdir(out))
     total = sum(os.path.getsize(os.path.join(out, f)) for f in files)
@@ -834,11 +898,9 @@ def cmd_zenodo(a):
         print("WARNING: over Zenodo's 50 GB default. Drop SVGs (omit --include-svg) or request a quota increase.")
 
 
-def write_readme(out, cfg, zips, n_genes, manifest, svg, reason_counts=None):
+def write_readme(out, cfg, zips, n_genes, manifest, svg):
     rel = cfg.get("release", {})
     by_ext = Counter(os.path.splitext(p)[1].lower() for _, p, _, _ in manifest)
-    reason_counts = reason_counts or Counter()
-    not_scored_line = ", ".join(f"{k} {v:,}" for k, v in reason_counts.most_common()) or "none"
     lines = [
         f"# {rel.get('title', 'Splice hotspot atlas')} ({rel.get('version', '')})", "",
         f"Genome assembly: {rel.get('assembly', '')}. Scored genes: {n_genes:,}. Built {date.today()}.", "",
@@ -846,18 +908,18 @@ def write_readme(out, cfg, zips, n_genes, manifest, svg, reason_counts=None):
         f"Related record (RNA-seq BAMs): https://doi.org/{rel.get('related_doi', '')}", "",
         "## Files", "",
         "| file | contents |", "|---|---|",
-        f"| summary_tables_{rel.get('version','')}.zip | genome-wide summary and hotspot tables (`results/`) |",
-        "| genes_chr*_*.zip | per-gene tables and plots for scored genes: `genes/chr<N>/<GENE>/` |",
+        f"| summary_tables_{rel.get('version','')}.zip | genome-wide result tables (`results/`), OMIM disease-gene list, and merged intron BED/TSV (`annotation/`) |",
+        "| genes_chr*_*.zip | per scored gene: intron BED/TSV, hotspot tables, spliceogenic CSVs, PNG plots under `genes/chr<N>/<GENE>/` |",
         "| gene_to_archive.tsv | which archive holds each scored gene |",
-        "| not_scored.tsv | disease-gene folders omitted from scoring (reason per gene) |",
         "| MANIFEST.tsv | every file in every archive with size and SHA-256 |",
         "| checksums.md5 | MD5 of each archive (compare with Zenodo's listed checksums) |", "",
+        "Annotation files inside summary_tables:",
+        "- `annotation/disease_genes.tsv` — OMIM disease-associated gene list used for the screen",
+        "- `annotation/all_scored_introns.bed` — BED6 intron intervals for all scored genes (name = GENE|intron_N; 0-based half-open)",
+        "- `annotation/all_scored_introns.tsv` — same intervals with transcript metadata",
+        "",
         "File types in the archives: " + ", ".join(f"{e or '(none)'} {n:,}" for e, n in by_ext.most_common()) + ".",
         "" if svg else "Vector (SVG) plots are not included in this release; PNGs are.", "",
-        "## Genes not scored", "",
-        f"Counts by reason: {not_scored_line}.",
-        "single_exon: chosen RefSeq transcript has no intron.",
-        "no_atlas_rows: introns were extracted but the Atlas returned no SNVs for those intervals.", "",
         "## Column descriptions", "", "[FILL IN: one line per column of each summary table]", "",
         "## Methods", "", "[FILL IN: prediction model and version, score threshold, hotspot test, BH correction]", "",
         "## How to cite", "", "[FILL IN after the DOI is reserved]", "",

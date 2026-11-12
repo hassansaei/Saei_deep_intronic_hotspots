@@ -54,11 +54,14 @@
     "all_genes_hotspot_intervals.csv",
     "cohort_intron_summary.csv"
   ],
+  "disease_genes_tsv": "genome_wide/data/disease_genes.tsv",
+  "_disease_genes_note": "OMIM disease-gene list used to drive the screen; packed into summary_tables zip.",
   "release": {
     "title": "Genome-wide deep-intronic splice hotspot atlas of OMIM disease-associated genes",
     "version": "v1.0",
     "assembly": "GRCh38",
+    "doi": "10.5281/zenodo.24167125",
     "related_doi": "10.5281/zenodo.19854065",
-    "web_url": "https://hassansaei.github.io/tool/ishmap/"
+    "web_url": "https://hassansaei.github.io/Saei_deep_intronic_hotspots/"
   }
 }

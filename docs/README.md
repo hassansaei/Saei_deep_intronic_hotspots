@@ -28,7 +28,7 @@ This folder is the published site root. Analysis outputs under `genome_wide/` st
 - Transcript / exons: the RefSeq model used for the screen (`transcript.json` + `ncbiRefSeq.txt`), not a separate MANE Select pick
 - Variants on the plot: Moderate/High only (`alphagenome_splicing >= 0.56`), capped at 3,000 per gene
 
-Genes in the browser: the 4,963 rows in `gene_hotspot_summary.csv`. Single-exon disease genes and loci with no Atlas rows are omitted here; they belong in the Zenodo `not_scored.tsv` when that release is built.
+Genes in the browser: the 4,963 rows in `gene_hotspot_summary.csv`. Single-exon disease genes and loci with no Atlas rows are omitted from the browser and from the Zenodo scored-gene archives.
 
 ## Layout
 
@@ -115,9 +115,17 @@ Chromosome zips and plots are **not** required for the browser. When depositing 
 python scripts/prepare_release.py zenodo --config config.json --out release
 ```
 
-Omit `--include-svg` unless the archive stays under Zenodo’s size limit. Reserve the DOI first, put it in `config.json` → `release`, then wire gene-page Zenodo links. Until then the UI keeps the “DOI not reserved yet” notice.
+Omit `--include-svg` unless the archive stays under Zenodo’s size limit. The pack includes:
+
+- result CSVs in `summary_tables_v1.0.zip`
+- OMIM disease-gene list: `annotation/disease_genes.tsv`
+- merged intron coordinates: `annotation/all_scored_introns.bed` and `.tsv`
+- per-gene intron BED/TSV (and tables/PNGs) inside each `genes_chr*_v1.0.zip`
+
+It does **not** write `not_scored.tsv`.
 
 ## Related records
 
+- ISHMap genome-wide atlas: https://doi.org/10.5281/zenodo.24167125
 - Targeted RNA-seq BAMs (COL4A5 study): https://doi.org/10.5281/zenodo.19854065
 - Analysis code: repository root README and `genome_wide/README.md`

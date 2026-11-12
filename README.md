@@ -2,13 +2,26 @@
   <img src="docs/logo.png" alt="ISHMap: Intron Splice Hotspot Mapping" width="360">
 </p>
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19854065.svg)](https://doi.org/10.5281/zenodo.19854065)
+[![Genome-wide atlas](https://zenodo.org/badge/DOI/10.5281/zenodo.24167125.svg)](https://doi.org/10.5281/zenodo.24167125)
+[![RNA-seq BAMs](https://zenodo.org/badge/DOI/10.5281/zenodo.19854065.svg)](https://doi.org/10.5281/zenodo.19854065)
+
+**Genome-wide deep-intronic mutational hotspot atlas of 4,963 disease-associated genes:** [10.5281/zenodo.24167125](https://doi.org/10.5281/zenodo.24167125)
 
 # Mapping deep intronic mutational hotspots by in silico mutagenesis enables single antisense oligonucleotide correction of multiple variants
 
 **Authors:** Hassan Saei, Béatrice Ardin, Nicolas Kaiser, Mouad Ouahmane, Olivier Gribouval, Vincent Moriniere, Florian J. Wopperer, Korbinian M. Riedhammer, Daniel P. Gale, Omid Sadeghi-Alavijeh, Claire Goursaud, Olivier Grunewald, Chloe Prosper, Louis Lebreton, Marion Rabant, Carsten Bergmann, Corinne Antignac, Michael S. Wiesener, Guillaume Dorval
 
-This repository contains scripts and notebooks used to generate figures for the manuscript on deep intronic variation hotspot(s) in `COL4A5` responsible for X-linked Alport syndrome. 
+This repository supports **ISHMap** (In Silico Hotspot Map): deep-intronic spliceogenic interval mapping from AlphaGenome scores, with experimental focus on `COL4A5` (X-linked Alport syndrome) and a genome-wide screen of OMIM disease-associated genes.
+
+**Released resources**
+
+| Resource | Where |
+|---|---|
+| **ISHMap gene browser** | GitHub Pages: [hassansaei.github.io/Saei_deep_intronic_hotspots](https://hassansaei.github.io/Saei_deep_intronic_hotspots/) (served from `docs/`) |
+| **Genome-wide deep-intronic mutational hotspot atlas of 4,963 disease-associated genes** | Zenodo [10.5281/zenodo.24167125](https://doi.org/10.5281/zenodo.24167125) (summary tables, OMIM gene list, merged intron BED/TSV, per-chromosome archives with PNG plots). Rebuild locally with `scripts/prepare_release.py zenodo` (see `docs/README.md`). |
+| **COL4A5 targeted RNA-seq BAMs** | Zenodo [10.5281/zenodo.19854065](https://doi.org/10.5281/zenodo.19854065) |
+
+The browser covers **4,963 scored genes** (GRCh38). Per gene it shows interior significant **intervals** (sorted by lowest BH q-value), concentration, and an intron view of Moderate/High Atlas SNVs (`alphagenome_splicing >= 0.56`). Download that gene’s intervals CSV from the gene page; use Zenodo for the full atlas.
 
 We organize the project for reproducibility, with separate stages for:
 - AlphaGenome in-silico analyses (variant scoring, ISM saturation mutagenesis)
@@ -16,6 +29,7 @@ We organize the project for reproducibility, with separate stages for:
 - Downstream postprocessing, motif enrichment, and summary plotting
 - Complementary in-R motif MSEA cross-check
 - Targeted RNA-seq sashimi visualization of the intron 6 hotspot
+- Genome-wide OMIM disease-gene screen (`genome_wide/`) and the ISHMap Pages browser (`docs/`)
 
 ## Glossary
 
@@ -28,7 +42,8 @@ We organize the project for reproducibility, with separate stages for:
 | **BH** | Benjamini–Hochberg multiple-testing correction that we apply to sliding-window hotspot tests within each intron. |
 | **FDR** | False discovery rate; significance threshold for hotspot windows (default 0.05). |
 | **NES** | Normalized enrichment score from MSEA output (direction and magnitude of motif-set enrichment). |
-| **H/M** | High or Moderate impact ISM variants (splice-site max quantile ≥ 0.999 or ≥ 0.99). |
+| **H/M** | In COL4A5 ISM notebooks: High or Moderate by splice-site max quantile (≥ 0.999 or ≥ 0.99). In the genome-wide Atlas screen: High `alphagenome_splicing >= 1.0`, Moderate `>= 0.56`. |
+| **Interval** | Merged deep-intronic window that passes the sliding-window enrichment test (BH FDR 0.05) with centre ≥ 100 nt from both intron ends. |
 
 ## References
 
@@ -41,6 +56,14 @@ Methods and software cited in this repository:
   In this repo, preranked MSEA runs use `fgsea` (Korotkevich, G. et al., *bioRxiv* 2019, https://doi.org/10.1101/060012) and `clusterProfiler` (Wu, T. et al., *Innovation* **2**, 100141, 2021, https://doi.org/10.1016/j.xinn.2021.100141) via `run_complementary_motif_analysis.ipynb`.
 
 ## Data availability
+
+### ISHMap browser and genome-wide OMIM screen
+- **Browser (live):** https://hassansaei.github.io/Saei_deep_intronic_hotspots/
+- **How it is built:** `docs/README.md` (regenerate `docs/data/` with `scripts/prepare_release.py web`)
+- **Screen methods:** `genome_wide/README.md` (OMIM disease genes, Atlas SNVs, absolute High/Moderate cutoffs, 15 nt windows, BH 0.05, 100 nt end trim)
+- **Full atlas for bulk download:** [10.5281/zenodo.24167125](https://doi.org/10.5281/zenodo.24167125). Rebuild locally with `python scripts/prepare_release.py zenodo --config config.json --out release` if needed (`docs/README.md`). Local `genome_wide/genes/` and `genome_wide/results/` stay gitignored.
+
+### Targeted RNA-seq BAMs (COL4A5 sashimi)
 We archived targeted RNA-seq BAM files (+ `.bai` indexes) on Zenodo:
 
 **DOI:** [10.5281/zenodo.19854065](https://doi.org/10.5281/zenodo.19854065)
@@ -54,8 +77,20 @@ Download the archive and place the files in `targeted_rnaseq/bams/` (preserving 
 ├── README.md
 ├── CITATION.cff
 ├── LICENSE
-├── docs/
-│   └── logo.png                       # repository logo (ISHMap)
+├── config.json                        # column map for web + Zenodo builds
+├── scripts/
+│   └── prepare_release.py             # build docs/data/ and Zenodo release/
+├── docs/                              # GitHub Pages root (ISHMap browser)
+│   ├── README.md                      # rebuild and publish instructions
+│   ├── index.html / gene.html / about.html
+│   ├── assets/                        # CSS, JS, logo
+│   ├── data/                          # generated index + per-gene JSON/CSV
+│   └── logo.png
+├── genome_wide/                       # OMIM genome-wide screen (local outputs gitignored)
+│   ├── README.md
+│   ├── run_pipeline.py
+│   ├── score_and_hotspots.py
+│   └── ...
 ├── coda/                              # Conda environment specs
 │   ├── README.md
 │   ├── alphagenome-env.yml            # Python env for AlphaGenome notebooks
@@ -126,7 +161,9 @@ Download the archive and place the files in `targeted_rnaseq/bams/` (preserving 
    - per-hotspot-intron motif inputs for MSEA (`motif_scores.rnk`, `motif_sets.gmt`, `motif_sequences.fasta`) via `motif_enrichment_pipeline.py` (hotspot introns 1, 4, 6, 30, 44, 49), with motif-to-variant traceability in `motif_scores_table.csv`;
    - an in-R MSEA cross-check per hotspot intron via `run_complementary_motif_analysis.ipynb` (clusterProfiler/fgsea + enrichplot/ggseqlogo/pheatmap), output to `plots_alphagenome_ISM_Intron<N>/complementary_motif_analysis/`;
    - cohort-level summary figures via `plot_gsea_cohort_summary.py` (MSEA NES heatmap) and `plot_hotspot_motif_disruptions.py` (strict ISS/ESE motif-disruption counts).
-3. **`targeted_rnaseq/`** — sample sheets, palettes, and sashimi figures for two RNA-seq cohorts (`samples.tsv` / `palette.tsv` and `samples2.tsv` / `palette2.tsv`). We gitignore BAMs due to size; cohort 1 BAMs are on Zenodo (see below).
+3. **`targeted_rnaseq/`** — sample sheets, palettes, and sashimi figures for two RNA-seq cohorts (`samples.tsv` / `palette.tsv` and `samples2.tsv` / `palette2.tsv`). We gitignore BAMs due to size; cohort 1 BAMs are on Zenodo (see Data availability).
+4. **`genome_wide/`** — OMIM disease-gene list, per-gene intron extraction, Atlas tabix scoring, deep-intronic interval calling, and plots. Outputs under `genome_wide/genes/` and `genome_wide/results/` are local. See `genome_wide/README.md`.
+5. **`docs/` + `scripts/prepare_release.py`** — ISHMap GitHub Pages browser and Zenodo atlas packaging. See `docs/README.md`.
 
 ## Conda Environments and JupyterLab
 We use two Conda environments:
@@ -161,5 +198,8 @@ We document reproducibility details (inputs, versions, parameters, execution ord
 - `notebooks/01_alphagenome_analysis/ISM/README.md`
 - `notebooks/02_postprocessing_plots_summary/README.md`
 - `targeted_rnaseq/README.md` (sample design, hg19 reference, ggsashimi command)
+- `genome_wide/README.md` (OMIM screen and Atlas hotspot calling)
+- `docs/README.md` (ISHMap browser rebuild and Zenodo pack)
+- `config.json` (paths and column map for `prepare_release.py`)
 
 

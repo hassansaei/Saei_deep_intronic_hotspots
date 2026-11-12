@@ -5,9 +5,14 @@ type: software
 authors:
   - family-names: Saei
     given-names: Hassan
-repository-code: "https://github.com/hassansaei/Saei_COL4A5_Intron6_hotspot"
+repository-code: "https://github.com/hassansaei/Saei_deep_intronic_hotspots"
+url: "https://hassansaei.github.io/Saei_deep_intronic_hotspots/"
 license: MIT
 references:
+  - type: dataset
+    title: "Genome-wide deep-intronic splice hotspot atlas of OMIM disease-associated genes"
+    doi: 10.5281/zenodo.24167125
+    url: "https://doi.org/10.5281/zenodo.24167125"
   - type: dataset
     title: "Targeted RNA-seq BAM files for COL4A5 intron 6 sashimi analysis"
     doi: 10.5281/zenodo.19854065
