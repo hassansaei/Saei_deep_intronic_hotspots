@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: "Mapping deep intronic mutational hotspots by in silico mutagenesis enables single antisense oligonucleotide correction of multiple variants"
-message: "If you use this repository, please cite it and the associated Zenodo data deposit as below."
+message: "If you use this repository, please cite the preprint and the associated Zenodo data deposits as below."
 type: software
 authors:
   - family-names: Saei
@@ -8,7 +8,23 @@ authors:
 repository-code: "https://github.com/hassansaei/Saei_deep_intronic_hotspots"
 url: "https://hassansaei.github.io/Saei_deep_intronic_hotspots/"
 license: MIT
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Saei
+      given-names: Hassan
+  title: "Mapping deep intronic mutational hotspots by in silico mutagenesis enables single antisense oligonucleotide correction of multiple variants"
+  year: 2026
+  doi: 10.64898/2026.09.10.26362533
+  url: "https://www.medrxiv.org/content/10.64898/2026.09.10.26362533v1"
+  journal: medRxiv
 references:
+  - type: article
+    title: "Mapping deep intronic mutational hotspots by in silico mutagenesis enables single antisense oligonucleotide correction of multiple variants"
+    doi: 10.64898/2026.09.10.26362533
+    url: "https://www.medrxiv.org/content/10.64898/2026.09.10.26362533v1"
+    journal: medRxiv
+    year: 2026
   - type: dataset
     title: "Genome-wide deep-intronic splice hotspot atlas of OMIM disease-associated genes"
     doi: 10.5281/zenodo.24167125

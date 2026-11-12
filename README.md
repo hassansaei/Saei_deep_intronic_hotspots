@@ -5,13 +5,17 @@
 [![Genome-wide atlas](https://zenodo.org/badge/DOI/10.5281/zenodo.24167125.svg)](https://doi.org/10.5281/zenodo.24167125)
 [![RNA-seq BAMs](https://zenodo.org/badge/DOI/10.5281/zenodo.19854065.svg)](https://doi.org/10.5281/zenodo.19854065)
 
-**Genome-wide deep-intronic mutational hotspot atlas of 4,963 disease-associated genes:** [10.5281/zenodo.24167125](https://doi.org/10.5281/zenodo.24167125)
-
 # Mapping deep intronic mutational hotspots by in silico mutagenesis enables single antisense oligonucleotide correction of multiple variants
 
 **Authors:** Hassan Saei, Béatrice Ardin, Nicolas Kaiser, Mouad Ouahmane, Olivier Gribouval, Vincent Moriniere, Florian J. Wopperer, Korbinian M. Riedhammer, Daniel P. Gale, Omid Sadeghi-Alavijeh, Claire Goursaud, Olivier Grunewald, Chloe Prosper, Louis Lebreton, Marion Rabant, Carsten Bergmann, Corinne Antignac, Michael S. Wiesener, Guillaume Dorval
 
 This repository supports **ISHMap** (In Silico Hotspot Map): deep-intronic spliceogenic interval mapping from AlphaGenome scores, with experimental focus on `COL4A5` (X-linked Alport syndrome) and a genome-wide screen of OMIM disease-associated genes.
+
+**Genome-wide deep-intronic mutational hotspot atlas of 4,963 disease-associated genes:** [10.5281/zenodo.24167125](https://doi.org/10.5281/zenodo.24167125)
+
+**ISHMap browser:** [https://hassansaei.github.io/Saei_deep_intronic_hotspots/](https://hassansaei.github.io/Saei_deep_intronic_hotspots/)
+
+**Citation:** Saei H, et al. Mapping deep intronic mutational hotspots by in silico mutagenesis enables single antisense oligonucleotide correction of multiple variants. *medRxiv* (2026). [https://www.medrxiv.org/content/10.64898/2026.09.10.26362533v1](https://www.medrxiv.org/content/10.64898/2026.09.10.26362533v1)
 
 **Released resources**
 
