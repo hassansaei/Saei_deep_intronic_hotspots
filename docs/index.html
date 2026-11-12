@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ISHMap · deep-intronic splice hotspot browser</title>
+  <meta name="description" content="Browse deep-intronic spliceogenic intervals across OMIM disease-associated genes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="icon" href="assets/img/logo.png">
+</head>
+<body>
+  <header id="site-header">
+    <div class="container">
+      <a id="brand" href="index.html">
+        <img src="assets/img/logo.png" alt="">
+        <span>ISHMap</span>
+      </a>
+      <nav id="nav" aria-label="Primary">
+        <a href="index.html" aria-current="page">Search</a>
+        <a href="about.html">About</a>
+        <a href="#release">Download</a>
+        <a href="#cite">Cite</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="hero">
+      <p class="eyebrow">In Silico Hotspot Map · v<span id="meta-version">1.0</span></p>
+      <h1>Deep-intronic splice hotspot browser</h1>
+      <p class="lead">
+        Search disease-associated genes for deep-intronic intervals enriched for
+        spliceogenic single-nucleotide substitutions scored by AlphaGenome.
+        Intervals are ranked by Benjamini–Hochberg q-value.
+      </p>
+
+      <form id="search-form">
+        <div>
+          <label for="gene-input">Gene symbol</label>
+          <input id="gene-input" name="g" type="search" autocomplete="off"
+                 placeholder="e.g. COL4A5" spellcheck="false" required>
+        </div>
+        <button id="search-btn" class="btn-primary" type="submit">Search</button>
+      </form>
+
+      <div id="example-genes" aria-label="Example genes">
+        <button type="button" class="chip chip-light" data-gene="COL4A5">COL4A5</button>
+        <button type="button" class="chip chip-light" data-gene="DMD">DMD</button>
+        <button type="button" class="chip chip-light" data-gene="CFTR">CFTR</button>
+      </div>
+      <p id="search-msg" aria-live="polite"></p>
+    </section>
+
+    <section id="stats" class="stat-grid" aria-label="Release statistics">
+      <div class="stat">
+        <span class="value" id="stat-genes">—</span>
+        <span class="label">genes screened</span>
+      </div>
+      <div class="stat">
+        <span class="value" id="stat-intervals">—</span>
+        <span class="label">interior intervals</span>
+      </div>
+      <div class="stat">
+        <span class="value" id="stat-splice">—</span>
+        <span class="label">spliceogenic variants in intron interiors</span>
+      </div>
+      <div class="stat">
+        <span class="value" id="stat-assembly" style="font-size:18px;padding-top:8px">—</span>
+        <span class="label">assembly · transcript source</span>
+      </div>
+    </section>
+
+    <section id="about" class="grid-3">
+      <article class="card">
+        <h3>Gene summary</h3>
+        <p class="muted">Transcript used for the screen, High/Moderate counts, interior spliceogenic burden, and max Atlas score.</p>
+      </article>
+      <article class="card">
+        <h3>Interval table</h3>
+        <p class="muted">Every deep-intronic significant interval with GRCh38 coordinates, BH q-value, spliceogenic count, and concentration. Sorted by lowest q.</p>
+      </article>
+      <article class="card">
+        <h3>Intron view</h3>
+        <p class="muted">Inline SVG of the selected interval against the scored RefSeq transcript, with spliceogenic variants as lollipops.</p>
+      </article>
+    </section>
+
+    <section id="release" class="card card-dark" style="margin-top:var(--sp-8)">
+      <h2 style="color:#fff;margin-top:0">Download the full release</h2>
+      <p>Per-gene interval tables download from each gene page. The complete archive (summary tables, per-gene CSVs, and PNG plots) will be deposited on Zenodo. The DOI is not reserved yet.</p>
+      <p style="margin-bottom:0">
+        Related RNA-seq BAMs:
+        <a href="https://doi.org/10.5281/zenodo.19854065">10.5281/zenodo.19854065</a>
+      </p>
+    </section>
+
+    <section id="cite" style="margin-top:var(--sp-8)">
+      <h2>Cite</h2>
+      <div class="cite-block">Saei H, et al. Mapping deep intronic mutational hotspots by in silico mutagenesis enables single antisense oligonucleotide correction of multiple variants. Preprint: https://doi.org/10.64898/2026.09.10.26362533
+ISHMap browser v<span id="cite-version">1.0</span> (built <span id="meta-built">—</span>). https://hassansaei.github.io/Saei_COL4A5_Intron6_hotspot/</div>
+    </section>
+  </main>
+
+  <footer id="site-footer">
+    <div class="container">
+      <span>Hassan Saei · ISHMap</span>
+      <span>Cookie-free usage statistics via GoatCounter (optional)</span>
+    </div>
+  </footer>
+
+  <script type="module" src="assets/js/home.js"></script>
+</body>
+</html>

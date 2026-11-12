@@ -59,3 +59,22 @@ notebooks/01_alphagenome_analysis/ISM/ncbiRefSeq.txt
 notebooks/01_alphagenome_analysis/ISM/*.bed
 notebooks/01_alphagenome_analysis/ISM/*.tsv
 notebooks/01_alphagenome_analysis/ISM/*.fa
+
+# AlphaGenome Atlas scores
+combined_splicing_snvs_tabix/
+
+# Genome-wide OMIM screen (local inputs and generated tables)
+genome_wide/omim/
+genome_wide/data/
+genome_wide/genes/
+genome_wide/results/
+genome_wide/.mplconfig/
+genome_wide/
+
+# Website / Zenodo release build products (local only)
+release/
+inventory.md
+*.zip
+# Python bytecode
+**/__pycache__/
+*.py[cod]

@@ -1,0 +1,64 @@
+{
+  "root": "genome_wide",
+  "results_dir": "genome_wide/results",
+  "genes_dir": "genome_wide/genes",
+  "summary_csv": "genome_wide/results/gene_hotspot_summary.csv",
+  "hotspots_csv": "genome_wide/results/shortlist_interior_hotspots.csv",
+  "intron_summary_csv": "genome_wide/results/cohort_intron_summary.csv",
+  "_interval_note": "Web JSON uses intervals (not hotspots). Sorted by min_BH_q. concentration = n_spliceogenic in interval / n_spliceogenic_interior in that intron. top_in_intron marks the best-q interval per intron.",
+  "summary_columns": {
+    "gene": "gene",
+    "chrom": "chrom",
+    "show": [
+      "n_shortlist_hotspots",
+      "n_spliceogenic_interior",
+      "max_atlas_score",
+      "n_high",
+      "n_moderate",
+      "n_introns",
+      "transcript",
+      "chrom"
+    ]
+  },
+  "hotspot_columns": {
+    "gene": "gene",
+    "chrom": "chrom",
+    "start": "hotspot_start",
+    "end": "hotspot_end",
+    "strand": null,
+    "intron": "intron_name",
+    "intron_start": null,
+    "intron_end": null,
+    "length": "length_nt",
+    "q": "min_BH_q",
+    "n_spliceogenic": "n_spliceogenic_in_hotspot",
+    "max_score": null
+  },
+  "variants": {
+    "file_glob": "intron_*/spliceogenic_variants.csv",
+    "pos": "position",
+    "ref": "ref",
+    "alt": "alt",
+    "score": "atlas_score",
+    "min_score": 0.56,
+    "max_per_gene": 3000,
+    "_note": "spliceogenic_variants.csv already keeps High (>=1.0) and Moderate (>=0.56). min_score 0.56 matches that floor."
+  },
+  "gtf": null,
+  "_gtf_note": "Leave null. Exons come from refseq + transcript.json; intron bounds from *_introns.tsv.",
+  "refseq": "notebooks/01_alphagenome_analysis/ISM/ncbiRefSeq.txt",
+  "_refseq_note": "UCSC ncbiRefSeq table used for the screen. Exons are taken from the scored transcript id in transcript.json.",
+  "results_files": [
+    "gene_hotspot_summary.csv",
+    "shortlist_interior_hotspots.csv",
+    "all_genes_hotspot_intervals.csv",
+    "cohort_intron_summary.csv"
+  ],
+  "release": {
+    "title": "Genome-wide deep-intronic splice hotspot atlas of OMIM disease-associated genes",
+    "version": "v1.0",
+    "assembly": "GRCh38",
+    "related_doi": "10.5281/zenodo.19854065",
+    "web_url": "https://hassansaei.github.io/tool/ishmap/"
+  }
+}

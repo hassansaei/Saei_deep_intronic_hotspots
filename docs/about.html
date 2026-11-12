@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About · ISHMap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="icon" href="assets/img/logo.png">
+</head>
+<body>
+  <header id="site-header">
+    <div class="container">
+      <a id="brand" href="index.html">
+        <img src="assets/img/logo.png" alt="">
+        <span>ISHMap</span>
+      </a>
+      <nav id="nav" aria-label="Primary">
+        <a href="index.html">Search</a>
+        <a href="about.html" aria-current="page">About</a>
+        <a href="index.html#release">Download</a>
+        <a href="index.html#cite">Cite</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <p class="eyebrow">Methods · columns · limits</p>
+    <h1>About ISHMap</h1>
+    <p class="lead">
+      ISHMap reports deep-intronic intervals where AlphaGenome-scored SNVs are
+      enriched for spliceogenic effects in OMIM disease-associated genes.
+    </p>
+
+    <section class="card section">
+      <h2>Calling intervals</h2>
+      <ul>
+        <li>High: <span class="mono">alphagenome_splicing &ge; 1.0</span></li>
+        <li>Moderate: <span class="mono">0.56 &le; alphagenome_splicing &lt; 1.0</span></li>
+        <li>Sliding window 15 nt, step 1; one-sided binomial enrichment vs the intron-wide spliceogenic fraction</li>
+        <li>Benjamini–Hochberg FDR 0.05 within each intron</li>
+        <li>Deep-intronic filter: drop 100 nt from each intron end; keep intervals whose centre lies in that interior</li>
+      </ul>
+      <p class="muted">
+        The browser lists every interior significant <strong>interval</strong>, sorted by lowest BH q-value.
+        A <span class="chip chip-orange">top</span> mark is the best-q interval in that intron.
+        Concentration = spliceogenic variants in the interval / spliceogenic variants in the intron interior.
+      </p>
+    </section>
+
+    <section class="card section">
+      <h2>Transcripts</h2>
+      <p>
+        Each gene uses the RefSeq transcript chosen for the screen (primary assembly,
+        <span class="mono">NM_</span> preferred over <span class="mono">NR_</span>/<span class="mono">XM_</span>,
+        then most exons, then longest span). Exon maps on the gene page come from that
+        same transcript, not necessarily MANE Select.
+      </p>
+    </section>
+
+    <section class="card section">
+      <h2>What is not scored</h2>
+      <p>
+        Single-exon disease genes and a small set of multi-exon genes with no Atlas
+        coverage (including some noncoding loci) are omitted from the browser.
+        They will be listed in <span class="mono">not_scored.tsv</span> of the Zenodo release.
+      </p>
+    </section>
+
+    <section class="card section">
+      <h2>Downloads</h2>
+      <p>
+        Gene pages offer a compact intervals CSV. The full per-gene tables and PNG plots
+        will ship as chromosome zips on Zenodo (DOI pending). Targeted RNA-seq BAMs for
+        the COL4A5 study are already at
+        <a href="https://doi.org/10.5281/zenodo.19854065">10.5281/zenodo.19854065</a>.
+      </p>
+    </section>
+
+    <section class="card section">
+      <h2>Code</h2>
+      <p>
+        Analysis repository:
+        <a href="https://github.com/hassansaei/Saei_COL4A5_Intron6_hotspot">github.com/hassansaei/Saei_COL4A5_Intron6_hotspot</a>
+      </p>
+    </section>
+  </main>
+
+  <footer id="site-footer">
+    <div class="container">
+      <span>Hassan Saei · ISHMap</span>
+      <span>Cookie-free usage statistics via GoatCounter (optional)</span>
+    </div>
+  </footer>
+</body>
+</html>

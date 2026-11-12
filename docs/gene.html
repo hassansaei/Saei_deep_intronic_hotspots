@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gene · ISHMap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="icon" href="assets/img/logo.png">
+</head>
+<body>
+  <header id="site-header">
+    <div class="container">
+      <a id="brand" href="index.html">
+        <img src="assets/img/logo.png" alt="">
+        <span>ISHMap</span>
+      </a>
+      <nav id="nav" aria-label="Primary">
+        <form id="gene-search-form" style="display:flex;gap:8px;align-items:center;margin:0">
+          <label class="visually-hidden" for="gene-search" style="position:absolute;left:-9999px">Gene symbol</label>
+          <input id="gene-search" type="search" placeholder="Search gene" autocomplete="off" spellcheck="false">
+        </form>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <p id="gene-msg" aria-live="polite"></p>
+
+    <div id="gene-title">
+      <h1 id="gene-symbol">—</h1>
+      <span class="chip" id="gene-transcript">—</span>
+      <span class="chip chip-light" id="gene-locus">—</span>
+      <span class="chip chip-light" id="gene-exons">—</span>
+    </div>
+
+    <div id="gene-actions">
+      <a id="dl-gene-csv" class="btn-primary" href="#">Download intervals CSV</a>
+      <a id="dl-zenodo" class="btn-secondary" href="#">Full chromosome archive on Zenodo</a>
+    </div>
+    <p id="release-note" class="notice" hidden>
+      The Zenodo full-release DOI is not reserved yet. Use the intervals CSV above for now.
+      Chromosome archives will appear here after the Zenodo deposit.
+    </p>
+
+    <section id="gene-summary" class="stat-grid" aria-label="Gene summary">
+      <div class="stat">
+        <span class="value" id="stat-intervals">—</span>
+        <span class="label">interior intervals</span>
+      </div>
+      <div class="stat">
+        <span class="value" id="stat-top">—</span>
+        <span class="label">top intervals (best q per intron)</span>
+      </div>
+      <div class="stat">
+        <span class="value" id="stat-q" style="font-size:22px;padding-top:6px;font-family:var(--font-mono)">—</span>
+        <span class="label">best BH q-value</span>
+      </div>
+      <div class="stat">
+        <span class="value" id="stat-score">—</span>
+        <span class="label">max Atlas score</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Transcript map</h2>
+      <p class="legend"><span class="ex">exons</span><span class="hs">interval intron</span></p>
+      <div id="exon-map" class="plot-wrap"></div>
+    </section>
+
+    <section class="section">
+      <h2>Interior intervals</h2>
+      <p class="muted">Sorted by lowest BH q-value. Orange <span class="chip chip-orange">top</span> marks the best-q interval in each intron. Concentration is spliceogenic variants in the interval divided by spliceogenic variants in the intron interior.</p>
+      <p id="interval-empty" class="notice" hidden>No interior intervals passed the threshold.</p>
+      <div id="hotspot-table-wrap">
+        <table class="data" id="interval-table">
+          <thead>
+            <tr>
+              <th data-key="id">Interval</th>
+              <th data-key="intron">Intron</th>
+              <th data-key="start">Coordinates (GRCh38)</th>
+              <th data-key="length">Length</th>
+              <th data-key="q">BH q-value</th>
+              <th data-key="n_spliceogenic">Spliceogenic</th>
+              <th data-key="concentration">Concentration</th>
+              <th data-key="max_score">Max Atlas score</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 id="intron-view-title">Intron view</h2>
+      <p class="legend">
+        <span class="hs">selected interval</span>
+        <span class="var">spliceogenic variant (score)</span>
+      </p>
+      <div id="intron-view" class="plot-wrap"></div>
+      <div id="intron-facts" class="stat-grid">
+        <div class="stat">
+          <span class="value" id="fact-donor" style="font-size:22px">—</span>
+          <span class="label">distance from donor</span>
+        </div>
+        <div class="stat">
+          <span class="value" id="fact-acceptor" style="font-size:22px">—</span>
+          <span class="label">distance to acceptor</span>
+        </div>
+        <div class="stat">
+          <span class="value" id="fact-intron-len" style="font-size:22px">—</span>
+          <span class="label">intron length</span>
+        </div>
+        <div class="stat">
+          <span class="value" id="fact-ratio" style="font-size:22px">—</span>
+          <span class="label">spliceogenic in interval / intron interior</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="gene-downloads" class="grid-3 section">
+      <article class="card">
+        <h3>Data on this page</h3>
+        <p class="muted">Interval coordinates are 1-based inclusive GRCh38. Variants shown score at least 0.56 (Moderate/High) and are capped at 3,000 per gene for the plot.</p>
+      </article>
+      <article class="card card-dark">
+        <h3 style="color:#fff">Cite this resource</h3>
+        <p>Saei H, et al. Preprint <a href="https://doi.org/10.64898/2026.09.10.26362533">10.64898/2026.09.10.26362533</a>. Browser: this page.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer id="site-footer">
+    <div class="container">
+      <span>Hassan Saei · ISHMap</span>
+      <span>Cookie-free usage statistics via GoatCounter (optional)</span>
+    </div>
+  </footer>
+
+  <script type="module" src="assets/js/gene.js"></script>
+</body>
+</html>

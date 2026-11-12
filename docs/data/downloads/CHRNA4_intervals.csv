@@ -1,0 +1,3 @@
+id,chrom,start,end,intron,length,q,n_spliceogenic,n_spliceogenic_interior,concentration,max_score,top_in_intron,intron_start,intron_end,strand
+IV-1,chr20,63354742,63354777,4,36,2.78166e-25,19,65,0.2923,0.944,True,63351028,63355974,-
+IV-2,chr20,63355210,63355237,4,28,0.000213677,6,65,0.0923,0.655,False,63351028,63355974,-
