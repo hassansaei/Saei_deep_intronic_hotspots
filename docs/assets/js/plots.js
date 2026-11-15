@@ -26,16 +26,20 @@ export function renderExonMap(container, { exons, intervals, selected, strand })
   const H = 64;
   const pad = 16;
   const nEx = exons.length;
-  const nInt = Math.max(nEx - 1, 0);
-  const exonW = 14;
-  const usable = W - 2 * pad - nEx * exonW;
-  const gap = nInt > 0 ? usable / nInt : 0;
   const y = 28;
+  const minExonW = 3;
+
+  // Exons are [start, end] on GRCh38 in genomic order; scale the full span linearly.
+  const geneStart = Math.min(...exons.map(([a]) => a));
+  const geneEnd = Math.max(...exons.map(([, b]) => b));
+  const span = Math.max(geneEnd - geneStart, 1);
+  const usable = W - 2 * pad;
+  const xOf = (pos) => pad + ((pos - geneStart) / span) * usable;
 
   const svg = el("svg", {
     viewBox: `0 0 ${W} ${H}`,
     role: "img",
-    "aria-label": `Transcript exon map with ${nEx} exons and selected deep-intronic intervals`,
+    "aria-label": `Transcript exon map with ${nEx} exons scaled to genomic length`,
   });
 
   const byIntron = new Map();
@@ -44,38 +48,49 @@ export function renderExonMap(container, { exons, intervals, selected, strand })
     if (!byIntron.has(iv.intron) || iv.top_in_intron) byIntron.set(iv.intron, iv);
   }
 
-  let x = pad;
+  // Intron backbone first so exons sit on top.
+  for (let i = 0; i < nEx - 1; i += 1) {
+    const [, eEnd] = exons[i];
+    const [nStart] = exons[i + 1];
+    svg.appendChild(el("line", {
+      x1: xOf(eEnd), y1: y, x2: xOf(nStart), y2: y,
+      stroke: "var(--c-intron)", "stroke-width": 2,
+    }));
+  }
+
   for (let i = 0; i < nEx; i += 1) {
+    const [a, b] = exons[i];
+    const x0 = xOf(a);
+    const x1 = xOf(b);
+    const w = Math.max(x1 - x0, minExonW);
     svg.appendChild(el("rect", {
-      x, y: y - 9, width: exonW, height: 18, rx: 2,
+      x: x0, y: y - 9, width: w, height: 18, rx: 1.5,
       fill: "var(--c-primary)",
     }));
-    if (i < nEx - 1) {
-      const x0 = x + exonW;
-      const x1 = x0 + gap;
-      svg.appendChild(el("line", {
-        x1: x0, y1: y, x2: x1, y2: y,
-        stroke: "var(--c-intron)", "stroke-width": 2,
-      }));
-      const intronNum = strand === "-" ? nEx - 1 - i : i + 1;
-      const iv = byIntron.get(intronNum);
-      if (iv) {
-        const cx = (x0 + x1) / 2;
-        const sel = selected && selected.intron === intronNum;
-        svg.appendChild(el("polygon", {
-          points: `${cx - 5},${y + 14} ${cx + 5},${y + 14} ${cx},${y + 4}`,
-          fill: sel ? "var(--c-hotspot)" : "var(--c-hotspot-soft)",
-        }));
-        if (sel) {
-          svg.appendChild(el("text", {
-            x: cx, y: H - 6, "text-anchor": "middle",
-            fill: "var(--c-hotspot-ink)",
-            "font-family": "var(--font-mono)",
-            "font-size": "11",
-          }, [`i${intronNum}`]));
-        }
-      }
-      x = x1;
+  }
+
+  for (let i = 0; i < nEx - 1; i += 1) {
+    const [, eEnd] = exons[i];
+    const [nStart] = exons[i + 1];
+    const intronNum = strand === "-" ? nEx - 1 - i : i + 1;
+    const iv = byIntron.get(intronNum);
+    if (!iv) continue;
+    const mid = iv.start != null && iv.end != null
+      ? (iv.start + iv.end) / 2
+      : (eEnd + nStart) / 2;
+    const cx = xOf(mid);
+    const sel = selected && selected.intron === intronNum;
+    svg.appendChild(el("polygon", {
+      points: `${cx - 5},${y + 14} ${cx + 5},${y + 14} ${cx},${y + 4}`,
+      fill: sel ? "var(--c-hotspot)" : "var(--c-hotspot-soft)",
+    }));
+    if (sel) {
+      svg.appendChild(el("text", {
+        x: cx, y: H - 6, "text-anchor": "middle",
+        fill: "var(--c-hotspot-ink)",
+        "font-family": "var(--font-mono)",
+        "font-size": "11",
+      }, [`i${intronNum}`]));
     }
   }
   container.appendChild(svg);
