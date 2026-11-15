@@ -1,10 +1,10 @@
-import { track } from "./analytics.js";
+import { track } from "./analytics.js?v=2";
 import {
   loadIndex,
   computeHomeStats,
   wireHomeSearch,
   goGene,
-} from "./app.js";
+} from "./app.js?v=2";
 
 function $(id) {
   return document.getElementById(id);

@@ -1,4 +1,4 @@
-import { track } from "./analytics.js";
+import { track } from "./analytics.js?v=2";
 import {
   loadGene,
   loadIndex,
@@ -8,8 +8,8 @@ import {
   chromLabel,
   dataUrl,
   wireHomeSearch,
-} from "./app.js";
-import { renderExonMap, renderIntronView, intronFacts } from "./plots.js";
+} from "./app.js?v=2";
+import { renderExonMap, renderIntronView, intronFacts } from "./plots.js?v=2";
 
 const params = new URLSearchParams(window.location.search);
 const symbol = params.get("g") || "";
